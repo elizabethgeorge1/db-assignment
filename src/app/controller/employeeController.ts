@@ -7,7 +7,9 @@ import { request } from "http";
 import validationMiddleware from "../middleware/validationMiddleware";
 import { CreateEmployeeDto } from "../dto/createEmployeeDto";
 import authorize from "../middleware/authorizationMiddleware";
-import { departmentDto } from "../dto/departmentDto";
+import { departmentDto } from "../dto/departmentDto"; 
+import { updateEmployeeDto } from "../dto/updateEmployeeDto";
+
 
 class EmployeeController extends AbstractController {
   constructor(private employeeService: EmployeeService) {
@@ -15,12 +17,21 @@ class EmployeeController extends AbstractController {
     this.initializeRoutes();
   }
   
+  // protected initializeRoutes() {
+  //   this.router.get(`${this.path}`,authorize([roles.admin,roles.engineer,roles.hr,roles.manager]), this.getAllEmployees);
+  //   this.router.post(`${this.path}`,authorize([roles.admin,roles.hr]), validationMiddleware(CreateEmployeeDto,APP_CONSTANTS.body), this.postEmployee);
+  //   this.router.get(`${this.path}/:id`,authorize([roles.admin,roles.engineer,roles.hr,roles.manager]),this.getEmployeeById);
+  //   this.router.put(`${this.path}/:id`,authorize([roles.admin,roles.hr]), validationMiddleware(updateEmployeeDto,APP_CONSTANTS.body), this.updateEmployee);
+  //   this.router.delete(`${this.path}/:id`,authorize([roles.admin,roles.hr]), this.deleteEmployee);
+  //   this.router.post(`${this.path}/login`,this.login
+  //   );
+  // }
   protected initializeRoutes() {
-    this.router.get(`${this.path}`,authorize([roles.admin,roles.engineer,roles.hr,roles.manager]), this.getAllEmployees);
-    this.router.post(`${this.path}`,authorize([roles.admin,roles.hr]), validationMiddleware(CreateEmployeeDto,APP_CONSTANTS.body), this.postEmployee);
-    this.router.get(`${this.path}/:id`,authorize([roles.admin,roles.engineer,roles.hr,roles.manager]),this.getEmployeeById);
-    this.router.put(`${this.path}/:id`,authorize([roles.admin,roles.hr]), this.updateEmployee);
-    this.router.delete(`${this.path}/:id`,authorize([roles.admin,roles.hr]), this.deleteEmployee);
+    this.router.get(`${this.path}`, this.getAllEmployees);
+    this.router.post(`${this.path}`, this.postEmployee);
+    this.router.get(`${this.path}/:empId`,this.getEmployeeById);
+    this.router.put(`${this.path}/:id`, this.updateEmployee);
+    this.router.delete(`${this.path}/:id`, this.deleteEmployee);
     this.router.post(`${this.path}/login`,this.login
     );
   }
@@ -34,7 +45,7 @@ class EmployeeController extends AbstractController {
   }
   private postEmployee = async (request: RequestWithUser, response: Response, next: NextFunction)=>{
     try{
-        const createdEmp=await this.employeeService.createEmployee(request.body);
+        const createdEmp=await this.employeeService.postEmployee(request.body);
         response.send(createdEmp);
         response.status(200);
 
@@ -47,7 +58,7 @@ class EmployeeController extends AbstractController {
   private getEmployeeById = async (request: RequestWithUser, response: Response, next: NextFunction)=>{
     try{
         response.status(200);
-        response.send(await this.employeeService.getEmployeeById(request.params.id));
+        response.send(await this.employeeService.getEmployeeById(request.params.empId));
         // response.send(this.fmt.formatResponse(request, Date.now() - request.startTime, "OK", 1));
 
 

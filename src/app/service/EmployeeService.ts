@@ -22,9 +22,9 @@ export class EmployeeService{
         return await this.employeeRepo.postEmployee(emp);
     }
 
-    async getEmployeeById(id: string){
+    async getEmployeeById(empId: string){
 
-        const resp= await this.employeeRepo.getEmployeeById(id);
+        const resp= await this.employeeRepo.getEmployeeById(empId);
         if(!resp){
             throw new EntityNotFoundException(ErrorCodes.USER_WITH_ID_NOT_FOUND)
         }
@@ -41,11 +41,20 @@ export class EmployeeService{
     public async createEmployee(employeeDetails: any) {
         try {
             const newEmployee = plainToClass(Employee, {
-                name: employeeDetails.name,
-                password: employeeDetails.password ?  await bcrypt.hash(employeeDetails.password, 10): '',
-                departmentId: employeeDetails.departmentId,
-                employeeAddress: employeeDetails.employeeAddress,
-                // departmentName:employeeDetails.department.name
+                name: employeeDetails.empName,
+                id:employeeDetails.empId,
+                // joiningdate: employeeDetails.empJoiningDate,
+                // address:employeeDetails.empAddress,
+                // experience:employeeDetails.empExperience,
+                // status:employeeDetails.empStatus,
+                // role:employeeDetails.empRole,
+                // upload:employeeDetails.upload
+
+
+                // password: employeeDetails.password ?  await bcrypt.hash(employeeDetails.password, 10): '',
+                // departmentId: employeeDetails.departmentId,
+                // employeeAddress: employeeDetails.employeeAddress,
+                // // departmentName:employeeDetails.department.name
             });
             const save = await this.employeeRepo.postEmployee(newEmployee);
             return save;
@@ -64,22 +73,22 @@ export class EmployeeService{
         if (!employeeDetails) {
           throw new UserNotAuthorizedException();
         }
-        const validPassword = await bcrypt.compare(password, employeeDetails.password);
-        if (validPassword) {
-          let payload = {
-            "custom:id": employeeDetails.id,
-            "custom:name": employeeDetails.name,
-            "custom:role":employeeDetails.role,
-          };
-          const token = this.generateAuthTokens(payload);
+        // const validPassword = await bcrypt.compare(password, employeeDetails.password);
+        // if (validPassword) {
+        //   let payload = {
+        //     "custom:id": employeeDetails.empId,
+        //     "custom:name": employeeDetails.empName,
+        //     "custom:role":employeeDetails.role,
+        //   };
+        //   const token = this.generateAuthTokens(payload);
 
-          return {
-            idToken: token,
-            employeeDetails,
-          };
-        } else {
-          throw new IncorrectUsernameOrPasswordException();
-        }
+        //   return {
+        //     idToken: token,
+        //     employeeDetails,
+        //   };
+        // } else {
+        //   throw new IncorrectUsernameOrPasswordException();
+        // }
       };
 
      private generateAuthTokens = (payload: any) => {

@@ -1,10 +1,11 @@
 import { getConnection, ObjectLiteral } from "typeorm";
+import { Department } from "../entities/Department";
 import { Employee } from "../entities/Employee";
 
 export class EmployeeRespository{
     async getAllEmployees(){
         const employeeRepo = getConnection().getRepository(Employee);
-        const ret= await employeeRepo.find({relations:['department','employeeAddress']});
+        const ret= await employeeRepo.find();
         return ret
     }
     async postEmployee(emp:Employee){
@@ -13,9 +14,9 @@ export class EmployeeRespository{
         return re;
     }
 
-    async getEmployeeById(id: string){
+    async getEmployeeById(empId: string){
         const employeeRepo = getConnection().getRepository(Employee);
-        return await employeeRepo.findOne(id);
+        return await employeeRepo.findOne(empId);
         
     }
 
@@ -29,7 +30,7 @@ export class EmployeeRespository{
 
     async updateEmployee(id: string,update: Employee){
         const employeeRepo = getConnection().getRepository(Employee);
-        return await employeeRepo.update({id: id},update);
+        return await employeeRepo.update({empId: id},update);
         
     }
 
